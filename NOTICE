@@ -1,0 +1,13 @@
+Annex bundles third-party software:
+
+- scrcpy server v3.3 (assets/scrcpy-server-v3.3.jar), unmodified.
+  Copyright (C) Genymobile / Romain Vimont. Apache License 2.0.
+  https://github.com/Genymobile/scrcpy
+
+- Tango (@yume-chan/*): ADB, WebUSB, scrcpy client and WebCodecs decoder libraries.
+  Copyright (c) Simon Chan. MIT License.
+  https://github.com/yume-chan/ya-webadb
+
+- Lucide icons (inlined SVGs). ISC License. https://lucide.dev
+
+Annex is an independent project and is not affiliated with Genymobile or scrcpy.

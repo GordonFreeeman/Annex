@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' blob: data:; style-src 'unsafe-inline'; img-src data: blob:; media-src blob:; connect-src 'self' ws: data: blob:; worker-src 'self' blob:; manifest-src 'self'; font-src data:; form-action 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Annex</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='8' fill='%2314161b'/%3E%3Crect x='11' y='7.5' width='10' height='17' rx='2.6' fill='none' stroke='%234be3b0' stroke-width='2'/%3E%3Ccircle cx='16' cy='21' r='1.1' fill='%234be3b0'/%3E%3C/svg%3E">
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body>
+<div id="app" data-state="idle">
+  <!-- ============================== top bar -->
+  <header class="top">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="1.5" y="1.5" width="29" height="29" rx="9" fill="url(#lg)"/><rect x="10.5" y="6.5" width="11" height="19" rx="3" fill="none" stroke="#0b0d10" stroke-width="2.2"/><circle cx="16" cy="22" r="1.2" fill="#0b0d10"/><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6ff0c2"/><stop offset="1" stop-color="#2fb4e8"/></linearGradient></defs></svg>
+      <span class="brand-name">Annex</span>
+    </div>
+    <div class="dev-pill" id="devPill" hidden>
+      <span class="dot"></span>
+      <span id="devName" class="dev-name"></span>
+      <span id="linkBadge" class="link-badge usb">USB</span>
+      <span id="devBattery" class="dev-bat"></span>
+    </div>
+    <div class="spacer"></div>
+    <button class="tb-btn install" id="btnInstall" hidden title="Install Annex as an app"><i data-icon="download"></i><span class="lbl">Install app</span></button>
+    <div class="top-actions">
+      <span id="clipChip" class="clip-chip" aria-live="polite"></span>
+      <button class="tb-btn" id="btnGaming" data-needs-device title="OG Gaming mode: real PC mouse &amp; keyboard (Ctrl+Alt+G)"><i data-icon="gamepad-2"></i><span class="lbl">Gaming</span></button>
+      <button class="tb-btn" id="btnCapture" data-needs-device title="Capture mouse &amp; keyboard (Ctrl+Alt+C or tap the host key)"><i data-icon="mouse-pointer-2"></i><span class="lbl">Capture</span></button>
+      <div class="vol">
+        <button class="tb-btn" id="btnVolume" title="Mute / unmute phone audio" aria-label="Mute phone audio"><i data-icon="volume-2"></i></button>
+        <div class="vol-pop"><input id="volSlider" type="range" min="0" max="100" aria-label="Volume"></div>
+      </div>
+      <button class="tb-btn" id="btnShot" data-needs-device title="Screenshot (Ctrl+Alt+S)" aria-label="Screenshot"><i data-icon="camera"></i></button>
+      <button class="tb-btn" id="btnRecord" data-needs-device title="Record screen (Ctrl+Alt+R)" aria-label="Record screen"><i data-icon="circle-dot"></i><span id="recTime" class="rec-time"></span></button>
+      <button class="tb-btn" id="btnStats" title="Stats overlay (Ctrl+Alt+I)" aria-label="Stats overlay"><i data-icon="gauge"></i></button>
+      <button class="tb-btn" id="btnFullscreen" data-needs-device title="Fullscreen (Ctrl+Alt+F)" aria-label="Fullscreen"><i data-icon="maximize"></i></button>
+      <button class="tb-btn danger-hover" id="btnDisconnect" data-needs-device title="Disconnect" aria-label="Disconnect"><i data-icon="unplug"></i></button>
+    </div>
+  </header>
+
+  <!-- ============================== rail -->
+  <nav class="rail" aria-label="Panels">
+    <button class="rail-btn" data-panel="device" title="Device"><i data-icon="smartphone"></i><span>Device</span></button>
+    <button class="rail-btn" data-panel="files" data-needs-device title="Files"><i data-icon="folder"></i><span>Files</span></button>
+    <button class="rail-btn" data-panel="apps" data-needs-device title="Apps"><i data-icon="layout-grid"></i><span>Apps</span></button>
+    <button class="rail-btn" data-panel="shell" data-needs-device title="Shell"><i data-icon="square-terminal"></i><span>Shell</span></button>
+    <div class="rail-spacer"></div>
+    <button class="rail-btn" data-panel="settings" title="Settings"><i data-icon="settings-2"></i><span>Settings</span></button>
+    <button class="rail-btn" data-panel="help" title="Help"><i data-icon="circle-help"></i><span>Help</span></button>
+  </nav>
+
+  <!-- ============================== side panel -->
+  <aside class="panel" id="panel" hidden>
+    <div class="panel-head"><h2 id="panelTitle">Device</h2><button class="icon-btn" id="panelClose" aria-label="Close panel"><i data-icon="x"></i></button></div>
+    <div class="panel-body">
+
+      <section class="panel-section" data-panel="device">
+        <div class="no-dev">Connect a phone to see its details.</div>
+        <div class="dev-only">
+        <div class="dev-card">
+          <div class="dev-card-head"><i data-icon="smartphone"></i><div><div id="infoModel" class="dc-model">–</div><div id="infoAndroid" class="dc-sub">–</div></div><button class="icon-btn sm" id="btnRefreshInfo" title="Refresh" aria-label="Refresh"><i data-icon="refresh-cw"></i></button></div>
+          <dl class="kv">
+            <dt>Link</dt><dd id="infoLink">–</dd>
+            <dt>Battery</dt><dd id="infoBattery">–</dd>
+            <dt>Screen</dt><dd id="infoScreen">–</dd>
+            <dt>Wi‑Fi IP</dt><dd id="infoIp">–</dd>
+          </dl>
+        </div>
+        <h3 class="sec">Wireless</h3>
+        <p class="muted" id="wifiState"></p>
+        <div class="row-btns">
+          <button class="btn primary" id="btnWifiOn"><i data-icon="wifi"></i>Enable Wi‑Fi mode</button>
+          <button class="btn ghost" id="btnWifiOff"><i data-icon="wifi-off"></i>Turn off</button>
+        </div>
+        <details class="explain"><summary>How Wi‑Fi mode stays private</summary>
+          <p>Browsers cannot open raw network sockets, so Annex installs a tiny bridge on the phone (<code>/data/local/tmp</code>, runs as the ADB shell user, no app install). The page and bridge share a random 256‑bit key that only ever travelled over the USB cable. Every byte between them is encrypted with AES‑256‑GCM using fresh per-connection keys (HKDF), so other devices on the network can't read or inject anything. ADB's own RSA authorisation still applies on top.</p>
+          <p>Wi‑Fi mode switches ADB to network mode (port 5555) until the phone reboots. Turn it off here to return to USB-only.</p>
+        </details>
+        <h3 class="sec">Power</h3>
+        <div class="row-btns">
+          <button class="btn ghost" data-reboot="system"><i data-icon="rotate-ccw"></i>Reboot</button>
+          <button class="btn ghost" data-reboot="recovery">Recovery</button>
+          <button class="btn ghost" data-reboot="bootloader">Bootloader</button>
+        </div>
+        <h3 class="sec">Server log <button class="icon-btn sm" id="btnCopyLog" title="Copy log" aria-label="Copy log"><i data-icon="copy"></i></button></h3>
+        <pre id="serverLog" class="log"></pre>
+        </div>
+      </section>
+
+      <section class="panel-section" data-panel="files" id="panel-files" hidden></section>
+      <section class="panel-section" data-panel="apps" id="panel-apps" hidden></section>
+      <section class="panel-section" data-panel="shell" id="panel-shell" hidden></section>
+
+      <section class="panel-section settings" data-panel="settings" hidden>
+        <div class="apply-bar" id="applyBar" hidden><span>Restart the stream to apply</span><button class="btn primary sm" id="btnApply"><i data-icon="refresh-cw"></i>Apply</button></div>
+        <h3 class="sec">Video</h3>
+        <label class="field"><span>Resolution limit</span>
+          <select data-setting="maxSize"><option value="0">Native</option><option value="2560">2560 px</option><option value="1920">1920 px</option><option value="1600">1600 px</option><option value="1280">1280 px</option><option value="1024">1024 px</option><option value="800">800 px</option></select></label>
+        <label class="field"><span>Frame rate</span>
+          <select data-setting="maxFps"><option value="30">30 fps</option><option value="60">60 fps</option><option value="90">90 fps</option><option value="120">120 fps</option></select></label>
+        <label class="field"><span>Bitrate <output></output></span><input type="range" min="2" max="40" step="1" data-setting="bitrateMbps"></label>
+        <label class="switch"><input type="checkbox" data-setting="cbr"><span class="sw"></span><span><b>Constant bitrate</b> — the phone encoder stays at the set bitrate instead of spiking during fast motion</span></label>
+        <label class="field"><span>Frame delivery</span>
+          <select data-setting="frameDelivery"><option value="smooth">Smooth — one frame per display refresh (+≤16 ms)</option><option value="latency">Lowest latency — draw immediately (may look uneven)</option></select></label>
+        <label class="switch"><input type="checkbox" data-setting="constantFps"><span class="sw"></span><span><b>Constant frame rate</b> — keep streaming at the set fps even when the screen is still (no stutter when motion starts)</span></label>
+        <label class="field"><span>Codec</span>
+          <select data-setting="videoCodec"><option value="h264">H.264 (most compatible)</option><option value="h265">H.265 / HEVC</option><option value="av1">AV1</option></select></label>
+        <label class="field"><span>Source</span>
+          <select data-setting="videoSource"><option value="display">Screen</option><option value="camera">Camera (Android 12+)</option></select></label>
+        <div id="cameraFields"><label class="field"><span>Camera</span><select data-setting="cameraFacing"><option value="back">Back</option><option value="front">Front</option><option value="external">External</option></select></label></div>
+        <label class="switch"><input type="checkbox" data-setting="virtualDisplay"><span class="sw"></span><span><b>Desktop mode</b> — mirror a separate virtual display (Android 10+). Launch apps on it from the Apps panel.</span></label>
+        <div id="virtualFields" class="grid3">
+          <label class="field"><span>Width</span><input class="input" type="number" min="320" max="4096" data-setting="virtualWidth"></label>
+          <label class="field"><span>Height</span><input class="input" type="number" min="320" max="4096" data-setting="virtualHeight"></label>
+          <label class="field"><span>DPI</span><input class="input" type="number" min="72" max="640" data-setting="virtualDpi"></label>
+        </div>
+
+        <h3 class="sec">Audio</h3>
+        <label class="switch"><input type="checkbox" data-setting="audio"><span class="sw"></span><span>Forward phone audio (Android 11+)</span></label>
+        <label class="field"><span>Audio codec</span>
+          <select data-setting="audioCodec"><option value="auto">Auto (raw on USB, Opus on Wi‑Fi)</option><option value="raw">Raw PCM — lowest latency</option><option value="opus">Opus — low bandwidth</option></select></label>
+        <label class="switch"><input type="checkbox" data-setting="audioDup"><span class="sw"></span><span>Keep playing on the phone too (Android 13+)</span></label>
+
+        <h3 class="sec">View</h3>
+        <label class="field"><span>Scaling</span>
+          <select data-setting="scaleMode"><option value="fit">Fit window</option><option value="native">1:1 pixels</option><option value="integer">Integer scale (sharp)</option></select></label>
+        <label class="switch"><input type="checkbox" data-setting="smoothing"><span class="sw"></span><span>Smooth scaling (off = crisp pixels)</span></label>
+        <label class="switch"><input type="checkbox" data-setting="showStats"><span class="sw"></span><span>Stats overlay</span></label>
+
+        <h3 class="sec">Input</h3>
+        <label class="field"><span>Keyboard</span>
+          <select data-setting="keyboardMode"><option value="sdk">Smart — follows your PC layout (typing)</option><option value="uhid">Physical HID keyboard (games, shortcuts)</option></select></label>
+        <button class="btn ghost sm" id="btnKbSettings"><i data-icon="keyboard"></i>Set HID keyboard layout on phone</button>
+        <label class="field"><span>Mouse while captured</span>
+          <select data-setting="captureMouse"><option value="uhid">Relative HID mouse (games, pointer)</option><option value="cursor">Touch cursor (tap at a cursor)</option></select></label>
+        <label class="field"><span>Host key</span>
+          <select data-setting="hostKey"><option value="ControlRight">Right Ctrl</option><option value="AltRight">Right Alt / AltGr</option><option value="MetaRight">Right Win / ⌘</option><option value="ScrollLock">Scroll Lock</option><option value="Pause">Pause</option></select></label>
+        <label class="field"><span>Input mode <span class="muted">Ctrl+Alt+G</span></span>
+          <select data-setting="inputMode"><option value="touch">Touch — left = finger tap, middle = Home, right = Back</option><option value="pc">OG Gaming — real PC mouse buttons &amp; physical keyboard</option></select></label>
+        <label class="field"><span>Scroll speed <output></output></span><input type="range" min="0.2" max="4" step="0.1" data-setting="scrollSpeed"></label>
+
+        <h3 class="sec">Soft keys</h3>
+        <p class="muted small">PC keys that act as Android buttons while the phone has focus. In fullscreen, a tap on <kbd>Esc</kbd> goes to the phone; <b>hold</b> <kbd>Esc</kbd> to leave fullscreen (always, not remappable).</p>
+        <div id="keyMapList" class="keymap"></div>
+        <div class="row-btns"><button class="btn ghost sm" id="btnAddMap"><i data-icon="plus"></i>Add soft key</button></div>
+
+        <h3 class="sec">Behaviour</h3>
+        <label class="switch"><input type="checkbox" data-setting="clipboardSync"><span class="sw"></span><span>Sync clipboard both ways</span></label>
+        <label class="switch"><input type="checkbox" data-setting="stayAwake"><span class="sw"></span><span>Keep phone awake while plugged in</span></label>
+        <label class="switch"><input type="checkbox" data-setting="screenOffOnStart"><span class="sw"></span><span>Turn phone screen off while mirroring</span></label>
+        <label class="switch"><input type="checkbox" data-setting="powerOffOnClose"><span class="sw"></span><span>Lock phone when disconnecting</span></label>
+        <label class="switch"><input type="checkbox" data-setting="showTouches"><span class="sw"></span><span>Show touches on the phone</span></label>
+        <label class="switch"><input type="checkbox" data-setting="autoConnect"><span class="sw"></span><span>Connect automatically when plugged in</span></label>
+        <label class="field"><span>Drop files into</span><input class="input mono" data-setting="uploadDir" spellcheck="false"></label>
+        <div class="row-btns"><button class="btn ghost sm" id="btnResetSettings"><i data-icon="rotate-ccw"></i>Reset to defaults</button></div>
+      </section>
+
+      <section class="panel-section help" data-panel="help" hidden>
+        <h3 class="sec">Hotkeys</h3>
+        <p class="muted">All app hotkeys are <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+key (left Alt; AltGr still types). They work everywhere, also when captured. Tap <kbd id="hostKeyName">Right Ctrl</kbd> (host key) to release a capture. <kbd>Ctrl</kbd>+<kbd>W</kbd> and <kbd>Alt</kbd>+<kbd>F4</kbd> always go to the browser.</p>
+        <table class="combo"><tbody id="comboTable"></tbody></table>
+        <h3 class="sec">Mouse — Touch mode (default)</h3>
+        <table class="combo"><tbody>
+          <tr><td>Left click / drag</td><td>Finger tap / swipe at the pointer</td></tr>
+          <tr><td>Right click · Back button</td><td>Android Back</td></tr>
+          <tr><td>Middle click</td><td>Android Home</td></tr>
+          <tr><td>Forward button</td><td>Recent apps</td></tr>
+          <tr><td>Wheel</td><td>Scroll</td></tr>
+          <tr><td><kbd>Ctrl</kbd> + drag</td><td>Pinch-zoom / rotate</td></tr>
+        </tbody></table>
+        <h3 class="sec">OG Gaming mode</h3>
+        <p class="muted">For PC games ported to Android: left, middle, right and side buttons, hover and wheel go through as a real mouse; the keyboard is a physical HID keyboard (set its layout on the phone once, Settings ▸ Input); Esc and Ctrl+V are sent to the game as-is. Captured, the mouse becomes a relative HID mouse.</p>
+        <h3 class="sec">Keyboard</h3>
+        <table class="combo"><tbody>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>V</kbd></td><td>Paste PC clipboard on the phone (<kbd>Ctrl</kbd>+<kbd>⇧</kbd>+<kbd>V</kbd> types it)</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Back (remap under Settings ▸ Soft keys) · <b>hold</b> to leave fullscreen</td></tr>
+          <tr><td>Drop files</td><td>APK → install · anything else → upload folder</td></tr>
+        </tbody></table>
+        <h3 class="sec">Troubleshooting</h3>
+        <details class="explain"><summary>“Interface in use” / cannot claim device</summary><p>Only one program can talk ADB over USB at a time. Close Android Studio / scrcpy or run <code>adb kill-server</code>.</p></details>
+        <details class="explain"><summary>No phone in the USB picker</summary><p>Check that USB debugging is on, the cable carries data and the phone is unlocked. On Windows the ADB interface needs a WinUSB-compatible driver (Google USB driver or the OEM one). On Linux, add a udev rule giving your user access to the phone (e.g. <code>SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", MODE="0666"</code>).</p></details>
+        <details class="explain"><summary>Video works but taps/keys do nothing</summary><p>Xiaomi / Redmi / POCO: also enable <b>USB debugging (Security settings)</b>. Some phones need <b>Disable permission monitoring</b> (ColorOS / realme) in developer options.</p></details>
+        <details class="explain"><summary>Samsung: USB debugging greyed out</summary><p>Turn off <b>Auto Blocker</b> (Settings ▸ Security and privacy).</p></details>
+        <details class="explain"><summary>Wi‑Fi mode won’t connect</summary><p>Phone and PC must be on the same network, and the network must allow device-to-device traffic (guest Wi‑Fi often doesn’t). After a phone reboot, connect via USB once and enable Wi‑Fi mode again. If the IP changed, edit it on the start screen. Chrome may ask to allow access to devices on your local network.</p></details>
+        <details class="explain"><summary>Laggy or blurry stream</summary><p>Lower the resolution limit or raise the bitrate in Settings. H.265 halves bandwidth if your GPU decodes it. Over Wi‑Fi, 5 GHz makes a big difference.</p></details>
+        <h3 class="sec">Install as an app</h3>
+        <p class="muted small" id="pwaHint">Browsers can only install pages served over http(s), not files opened from disk. Unzip <b>annex-pwa.zip</b> and run <code>start-annex</code> once: it serves Annex on <code>http://localhost:27180</code> and opens it — click <b>Install app</b> in the top bar. Afterwards the installed app starts without the server and works fully offline.</p>
+        <h3 class="sec">About</h3>
+        <p class="muted small">Annex runs entirely in this page. Its content security policy forbids every network request except WebSocket connections to your phone. Mirroring uses the open-source scrcpy 3.3 server (Apache-2.0, Genymobile) pushed to <code>/data/local/tmp</code>; the ADB stack is Tango (MIT). Nothing is installed on the phone and nothing is uploaded anywhere.</p>
+      </section>
+    </div>
+  </aside>
+
+  <!-- ============================== main -->
+  <main class="main">
+    <section id="welcome" class="welcome">
+      <div class="hero">
+        <div class="hero-art" aria-hidden="true">
+          <div class="ha-glow"></div>
+          <svg viewBox="0 0 220 160"><rect x="20" y="22" width="150" height="100" rx="10" class="ha-monitor"/><rect x="74" y="122" width="42" height="8" rx="2" class="ha-stand"/><rect x="58" y="130" width="74" height="6" rx="3" class="ha-stand"/><rect x="126" y="40" width="64" height="112" rx="13" class="ha-phone"/><rect x="132" y="48" width="52" height="92" rx="6" class="ha-screen"/><path d="M60 72 h46" class="ha-link"/><circle cx="158" cy="146" r="2.5" class="ha-dot"/></svg>
+        </div>
+        <h1>Your phone, in a browser tab.</h1>
+        <p class="lede">Mirror and control an Android phone over USB or Wi‑Fi. Direct connection, no servers, no accounts, works offline.</p>
+
+        <div class="cta" id="cta">
+          <button class="btn primary lg" id="btnUsb"><i data-icon="usb"></i>Connect via USB</button>
+          <button class="btn ghost lg" id="btnWifi"><i data-icon="wifi"></i>Connect via Wi‑Fi</button>
+        </div>
+        <p class="warn-line" id="usbMissing" hidden>This browser has no WebUSB. Open this file in Chrome, Edge, Brave or Opera on a desktop.</p>
+
+        <div class="connecting" id="connecting">
+          <div class="spinner"></div>
+          <div><div id="connText" class="conn-text">Connecting…</div><div id="connSub" class="conn-sub"></div></div>
+          <button class="btn ghost sm" id="btnCancelConnect">Cancel</button>
+        </div>
+
+        <div class="known-label" id="knownLabel" hidden>Your devices</div>
+        <div class="known" id="known" hidden></div>
+
+        <ol class="steps">
+          <li><b>Developer options</b><span>Settings ▸ About phone ▸ tap <i>Build number</i> 7×</span></li>
+          <li><b>USB debugging</b><span>Settings ▸ System ▸ Developer options</span></li>
+          <li><b>Plug in &amp; allow</b><span>Click Connect, pick the phone, tap <i>Allow</i></span></li>
+        </ol>
+        <div class="checks" id="checks"></div>
+        <p class="privacy"><i data-icon="shield-check"></i><span>Private by construction: this page is blocked from making web requests. Video is decoded locally on your GPU, and Wi‑Fi traffic is end-to-end encrypted.</span></p>
+      </div>
+    </section>
+
+    <section id="stage" class="stage" tabindex="0" hidden aria-label="Phone screen — click to control">
+      <div class="screen" id="screen">
+        <div class="vcursor" id="vcursor" hidden></div>
+        <div class="stats" id="stats" hidden></div>
+        <div class="capture-hint" id="captureHint" hidden><i data-icon="lock"></i><span>Captured — tap <kbd class="host-name">Right Ctrl</kbd> to release</span></div>
+        <div class="screen-loading" id="screenLoading" hidden><div class="spinner"></div><span>Starting stream…</span></div>
+        <div class="stopped-overlay"><button class="btn primary" id="navRestart"><i data-icon="play"></i>Restart stream</button></div>
+      </div>
+      <div class="dock" id="dock" role="toolbar" aria-label="Phone buttons">
+        <button class="dock-btn" id="navBack" title="Back (right click)" aria-label="Back"><i data-icon="arrow-left"></i></button>
+        <button class="dock-btn" id="navHome" title="Home (middle click) — hold for assistant" aria-label="Home"><i data-icon="circle"></i></button>
+        <button class="dock-btn" id="navRecents" title="Recent apps" aria-label="Recent apps"><i data-icon="square"></i></button>
+        <span class="dock-sep"></span>
+        <button class="dock-btn" id="navVolUp" title="Volume up" aria-label="Volume up"><i data-icon="volume-2"></i></button>
+        <button class="dock-btn" id="navVolDown" title="Volume down" aria-label="Volume down"><i data-icon="volume-1"></i></button>
+        <button class="dock-btn" id="navPower" title="Power — hold for power menu" aria-label="Power"><i data-icon="power"></i></button>
+        <span class="dock-sep"></span>
+        <button class="dock-btn" id="navRotate" title="Rotate" aria-label="Rotate"><i data-icon="rotate-cw"></i></button>
+        <button class="dock-btn" id="navNotif" title="Notifications" aria-label="Notifications"><i data-icon="bell"></i></button>
+        <button class="dock-btn" id="btnScreenOff" title="Phone screen off (keeps mirroring)" aria-label="Phone screen off"><i data-icon="monitor-off"></i></button>
+      </div>
+    </section>
+
+    <div class="drop-overlay" id="dropOverlay" hidden>
+      <div class="drop-card"><i data-icon="upload"></i><b>Drop to send to the phone</b><span>APKs are installed · other files go to <code id="dropDir">/sdcard/Download/</code></span></div>
+    </div>
+  </main>
+
+  <div class="transfers" id="transfers" hidden></div>
+  <div class="toasts" id="toasts"></div>
+</div>
+<!--__ICONS__-->
+<script>
+/*__JS__*/
+</script>
+</body>
+</html>

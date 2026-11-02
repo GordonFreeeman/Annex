@@ -1,0 +1,1 @@
+package android.content.pm; public class ResolveInfo { public ActivityInfo activityInfo; public CharSequence loadLabel(PackageManager pm) { return null; } public android.graphics.drawable.Drawable loadIcon(PackageManager pm) { return null; } }
